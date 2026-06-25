@@ -63,9 +63,16 @@ const handleFilterChange = async (newFilter) => {
   );
 };
 
-  const handlePageChange = (_, newPage) => {
-    setPage(newPage);
-  };
+const handlePageChange = async (_, newPage) => {
+  setPage(newPage);
+
+  await Log(
+    "frontend",
+    "info",
+    "component",
+    `Moved to page ${newPage}`
+  );
+};
 
   return (
     <Box
