@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const TOKEN = import.meta.env.VITE_ACCESS_TOKEN;
-console.log(import.meta.env.VITE_ACCESS_TOKEN);
+
 export async function Log(stack, level, packageName, message) {
   try {
     const response = await axios.post(

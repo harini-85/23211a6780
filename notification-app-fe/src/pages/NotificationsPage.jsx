@@ -16,7 +16,6 @@ import { NotificationFilter } from "../components/NotificationFilter";
 import { useNotifications } from "../hooks/useNotifications";
 import { Log } from "../utils/logger";
 
-// Priority Order
 const priority = {
   Placement: 1,
   Result: 2,
@@ -150,7 +149,7 @@ export function NotificationsPage() {
           </Alert>
         )}
 
-=      {!loading &&
+      {!loading &&
         !error &&
         sortedNotifications.length > 0 && (
           <Stack spacing={2}>
