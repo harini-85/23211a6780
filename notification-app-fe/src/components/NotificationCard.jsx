@@ -27,9 +27,11 @@ export function NotificationCard({
       <CardContent>
         <Stack
           direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={1}
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 1,
+          }}
         >
           <Chip
             label={notification.Type}

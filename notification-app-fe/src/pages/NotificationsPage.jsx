@@ -39,7 +39,6 @@ export function NotificationsPage() {
     filter === "All" ? "" : filter
   );
 
-  // Stage 1: Priority Sorting
   const sortedNotifications = [...notifications].sort((a, b) => {
     if (priority[a.Type] !== priority[b.Type]) {
       return priority[a.Type] - priority[b.Type];
@@ -51,12 +50,10 @@ export function NotificationsPage() {
     );
   });
 
-  // Unread Count
   const unreadCount = sortedNotifications.filter(
     (notification) => !readNotifications.includes(notification.ID)
   ).length;
 
-  // Filter
   const handleFilterChange = async (newFilter) => {
     if (!newFilter) return;
 
@@ -71,7 +68,6 @@ export function NotificationsPage() {
     );
   };
 
-  // Pagination
   const handlePageChange = async (_, newPage) => {
     setPage(newPage);
 
@@ -83,7 +79,6 @@ export function NotificationsPage() {
     );
   };
 
-  // Read Notification
   const handleNotificationClick = async (id) => {
     if (!readNotifications.includes(id)) {
       setReadNotifications((prev) => [...prev, id]);
@@ -106,12 +101,10 @@ export function NotificationsPage() {
         py: 4,
       }}
     >
-      {/* Header */}
       <Stack
         direction="row"
         spacing={2}
-        alignItems="center"
-        mb={3}
+        sx={{ alignItems: "center", mb: 3 }}
       >
         <Badge
           badgeContent={unreadCount}
@@ -128,33 +121,27 @@ export function NotificationsPage() {
 
       <Divider sx={{ mb: 3 }} />
 
-      {/* Filter */}
-      <Box mb={3}>
+      <Box sx={{ mb: 3 }}>
         <NotificationFilter
           value={filter}
           onChange={handleFilterChange}
         />
       </Box>
 
-      {/* Loading */}
       {loading && (
         <Box
-          display="flex"
-          justifyContent="center"
-          py={5}
+          sx={{ display: "flex", justifyContent: "center", py: 5 }}
         >
           <CircularProgress />
         </Box>
       )}
 
-      {/* Error */}
       {!loading && error && (
         <Alert severity="error">
           Failed to load notifications: {error}
         </Alert>
       )}
 
-      {/* Empty */}
       {!loading &&
         !error &&
         sortedNotifications.length === 0 && (
@@ -163,8 +150,7 @@ export function NotificationsPage() {
           </Alert>
         )}
 
-      {/* Notification List */}
-      {!loading &&
+=      {!loading &&
         !error &&
         sortedNotifications.length > 0 && (
           <Stack spacing={2}>
@@ -181,12 +167,9 @@ export function NotificationsPage() {
           </Stack>
         )}
 
-      {/* Pagination */}
       {!loading && totalPages > 1 && (
         <Box
-          display="flex"
-          justifyContent="center"
-          mt={4}
+          sx={{ display: "flex", justifyContent: "center", mt: 4 }}
         >
           <Pagination
             page={page}
