@@ -14,7 +14,9 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { NotificationCard } from "../components/NotificationCard";
 import { NotificationFilter } from "../components/NotificationFilter";
 import { useNotifications } from "../hooks/useNotifications";
+import { Log } from "../utils/logger";
 
+// Priority Order
 const priority = {
   Placement: 1,
   Result: 2,
@@ -24,6 +26,7 @@ const priority = {
 export function NotificationsPage() {
   const [filter, setFilter] = useState("All");
   const [page, setPage] = useState(1);
+  const [readNotifications, setReadNotifications] = useState([]);
 
   const {
     notifications,
@@ -36,6 +39,7 @@ export function NotificationsPage() {
     filter === "All" ? "" : filter
   );
 
+  // Stage 1: Priority Sorting
   const sortedNotifications = [...notifications].sort((a, b) => {
     if (priority[a.Type] !== priority[b.Type]) {
       return priority[a.Type] - priority[b.Type];
@@ -47,32 +51,51 @@ export function NotificationsPage() {
     );
   });
 
-  const unreadCount = sortedNotifications.length;
+  // Unread Count
+  const unreadCount = sortedNotifications.filter(
+    (notification) => !readNotifications.includes(notification.ID)
+  ).length;
 
-const handleFilterChange = async (newFilter) => {
-  if (!newFilter) return;
+  // Filter
+  const handleFilterChange = async (newFilter) => {
+    if (!newFilter) return;
 
-  setFilter(newFilter);
-  setPage(1);
+    setFilter(newFilter);
+    setPage(1);
 
-  await Log(
-    "frontend",
-    "info",
-    "component",
-    `Filter changed to ${newFilter}`
-  );
-};
+    await Log(
+      "frontend",
+      "info",
+      "component",
+      `Filter changed to ${newFilter}`
+    );
+  };
 
-const handlePageChange = async (_, newPage) => {
-  setPage(newPage);
+  // Pagination
+  const handlePageChange = async (_, newPage) => {
+    setPage(newPage);
 
-  await Log(
-    "frontend",
-    "info",
-    "component",
-    `Moved to page ${newPage}`
-  );
-};
+    await Log(
+      "frontend",
+      "info",
+      "component",
+      `Moved to page ${newPage}`
+    );
+  };
+
+  // Read Notification
+  const handleNotificationClick = async (id) => {
+    if (!readNotifications.includes(id)) {
+      setReadNotifications((prev) => [...prev, id]);
+
+      await Log(
+        "frontend",
+        "info",
+        "component",
+        `Notification marked as read`
+      );
+    }
+  };
 
   return (
     <Box
@@ -83,6 +106,7 @@ const handlePageChange = async (_, newPage) => {
         py: 4,
       }}
     >
+      {/* Header */}
       <Stack
         direction="row"
         spacing={2}
@@ -104,6 +128,7 @@ const handlePageChange = async (_, newPage) => {
 
       <Divider sx={{ mb: 3 }} />
 
+      {/* Filter */}
       <Box mb={3}>
         <NotificationFilter
           value={filter}
@@ -111,6 +136,7 @@ const handlePageChange = async (_, newPage) => {
         />
       </Box>
 
+      {/* Loading */}
       {loading && (
         <Box
           display="flex"
@@ -121,14 +147,14 @@ const handlePageChange = async (_, newPage) => {
         </Box>
       )}
 
+      {/* Error */}
       {!loading && error && (
         <Alert severity="error">
-          Failed to load notifications:
-          {" "}
-          {error}
+          Failed to load notifications: {error}
         </Alert>
       )}
 
+      {/* Empty */}
       {!loading &&
         !error &&
         sortedNotifications.length === 0 && (
@@ -137,6 +163,7 @@ const handlePageChange = async (_, newPage) => {
           </Alert>
         )}
 
+      {/* Notification List */}
       {!loading &&
         !error &&
         sortedNotifications.length > 0 && (
@@ -145,11 +172,16 @@ const handlePageChange = async (_, newPage) => {
               <NotificationCard
                 key={notification.ID}
                 notification={notification}
+                isRead={readNotifications.includes(notification.ID)}
+                onClick={() =>
+                  handleNotificationClick(notification.ID)
+                }
               />
             ))}
           </Stack>
         )}
 
+      {/* Pagination */}
       {!loading && totalPages > 1 && (
         <Box
           display="flex"
