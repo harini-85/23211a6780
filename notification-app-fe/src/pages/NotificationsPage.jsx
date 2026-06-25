@@ -49,12 +49,19 @@ export function NotificationsPage() {
 
   const unreadCount = sortedNotifications.length;
 
-  const handleFilterChange = (newFilter) => {
-    if (newFilter) {
-      setFilter(newFilter);
-      setPage(1);
-    }
-  };
+const handleFilterChange = async (newFilter) => {
+  if (!newFilter) return;
+
+  setFilter(newFilter);
+  setPage(1);
+
+  await Log(
+    "frontend",
+    "info",
+    "component",
+    `Filter changed to ${newFilter}`
+  );
+};
 
   const handlePageChange = (_, newPage) => {
     setPage(newPage);
